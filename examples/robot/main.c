@@ -1,6 +1,6 @@
 // serialio - demonstrate how to successfully read a line of text and
 // use STRTOK() to split the line into tokens (or words)
-//testcomment
+// Robot will be used to allow user to input commands that control a robotic arm
 #include <stdio.h>
 #include <string.h>
 #include "uart.h"
@@ -9,63 +9,39 @@
 #define MAX_BUFFER 24
 #define MAX_TOKENS (MAX_BUFFER/2)
 #define MAX_DELIMS 3
-//this is a test
 int main(void) 
 {    
-
     init_serial();
-    char input[MAX_BUFFER + 1] = {}; //array will store input
-    char delims[MAX_DELIMS + 1] = {" .,"}; //array of delim
-    puts("Control Robotic Arm!");
-    printf("Enter text between any ',. ' to create command.\n");
-/*
-    puts("Control Robotic Arm!");
-    printf("Enter text between any ',. ' to create command.\n");
-    puts("Serial I/O Test: readLine with tokens");
-    printf("Enter text up to %i characters, or end w/ CR\n", MAX_BUFFER);
-    printf("Line will be parsed into tokens\n");
-    printf("Possible delimitors are (w/ ASCII code): ");
- 
-    for (uint8_t delim=0; delim < MAX_DELIMS; delim++)
-    {
-        printf("'%c' 0x%x ", delims[delim], delims[delim]);
-    }
-    printf("\n");
-    */
+    char input[MAX_BUFFER + 1] = {}; // array will store input
+    char delims[MAX_DELIMS + 1] = {" .,"}; // array of delim
 
+    puts("Control Robotic Arm!");// starts output for user
+    printf("Enter text between any ',. ' to create command.\n");// delims
+    // instructs user of format for entering input
     printf("In this order: Command,Joint,Direction,Distance. \nEnter:");
-    //reads sentence
-    /*
-    uint8_t num_char = readLine(input, MAX_BUFFER);
-
-                                        //how many charcateruint8_t num_char = readLine(input, MAX_BUFFER);s are read
-    printf("You entered %i characters\n", num_char);
-    */
-   uint8_t num_char = readLine(input, MAX_BUFFER);
-    for (uint8_t out_char=0; out_char<num_char; out_char++)
-    {               //out_char is the actual "sentence" given
-        printf("%c", input[out_char]);
-    }
     
-     // break input line into tokens
-    char *tokens[MAX_TOKENS];
-    uint8_t index = 0;
+    uint8_t num_char = readLine(input, MAX_BUFFER);// stores the inputs into num_char
+    printf("You entered %i characters:\n", num_char); // how many char are read/provided in command
+    
+    for (uint8_t out_char=0; out_char<num_char; out_char++)// prints out user's input
+    { 
+        printf("%c", input[out_char]);// input[out_char] is the tokens found
+    }
+     
+    char *tokens[MAX_TOKENS];// break input line into tokens
+    uint8_t index = 0;// start count from 0
     tokens[index] = strtok(input, delims);
     //keeps getting more tokens
-    while ( (tokens[index] != NULL) && (index < MAX_TOKENS - 1) ) {
-        index++;
-        tokens[index] = strtok(NULL, delims);
+    while ( (tokens[index] != NULL) && (index < MAX_TOKENS - 1) )// while loop to print out tokens
+    {
+        index++;// increases the index (0..1...2..etc)
+        tokens[index] = strtok(NULL, delims);// points index to tokens
     }
-    //index is 0,1,2,3 - places where the seperate tokens are stored
-    //set tokens like 0 = command
-    // dist = token[1] move = token[0] ...
+    // depending on how many tokens are accounted for, store that # in tokens_found
     uint8_t tokens_found = index;
+    printf("\nThe %i commands are:\n", tokens_found);// prints out user's commands
 
-    printf("\nThe %i commands are:\n", tokens_found);
-    //printf("index token\n");
-    //0, 1,2,...etc if there is another token not accounted for
-    // in the index, add one more index space
-    for (index=0; index<tokens_found; index++)
+    for (index=0; index<tokens_found; index++)// for loop to print index and token
     {
         printf("%5i %s\n", index, tokens[index]);
 
